@@ -33,11 +33,25 @@ Item {
     readonly property int  cornerRadius: theme.cornerRadius
     readonly property bool round:        theme.round
 
+    readonly property var primaryScreen: {
+        for (let i = 0; i < Quickshell.screens.length; i++) {
+            if (Quickshell.screens[i].name === "DP-6") return Quickshell.screens[i];
+        }
+        return Quickshell.screens[0];
+    }
+
     // Wired in desktop/shell.qml to the sibling OmniMenu's toggle().
     signal paletteToggleRequested()
 
-    // Kanji numerals 〇 一 二 ... 十.
-    readonly property var kanjiNum: ["〇","一","二","三","四","五","六","七","八","九","十"]
+    readonly property string wsFont: "Klingon pIqaD HaSta"
+    readonly property var kanjiNum: [
+        String.fromCodePoint(0xF8F0), String.fromCodePoint(0xF8F1),
+        String.fromCodePoint(0xF8F2), String.fromCodePoint(0xF8F3),
+        String.fromCodePoint(0xF8F4), String.fromCodePoint(0xF8F5),
+        String.fromCodePoint(0xF8F6), String.fromCodePoint(0xF8F7),
+        String.fromCodePoint(0xF8F8), String.fromCodePoint(0xF8F9),
+        String.fromCodePoint(0xF8F1) + String.fromCodePoint(0xF8F0)
+    ]
     function indexKanji(n) { return n >= 0 && n <= 10 ? kanjiNum[n] : String(n); }
 
     // BMP Private Use Area icons; written via fromCodePoint so the source
@@ -61,6 +75,7 @@ Item {
     readonly property string icoPause:   String.fromCodePoint(0xf04c)
 
     readonly property int barHeight: 26
+    property string barMode: "klingon"
 
     // ---------- Edge ----------
     // Drives bar anchors, internal Row/Column flow, and where the toggle
@@ -75,6 +90,11 @@ Item {
 
     function edgeArrow() {
         return ({top: "↑", right: "→", bottom: "↓", left: "←"})[root.barEdge] || "?";
+    }
+
+    function cycleBarMode() {
+        const modes = ["klingon", "stark", "hidden"];
+        root.barMode = modes[(modes.indexOf(root.barMode) + 1) % modes.length];
     }
 
     // ---------- Tooltips ----------
@@ -249,6 +269,8 @@ Item {
     property string audioIcon: ""
     property int    audioVol: 0
     property bool   audioMuted: false
+    property string audioDeviceType: "speaker"
+    readonly property string icoHeadset: String.fromCodePoint(0xf02cb)
     // List of PipeWire/Pulse output sinks with the current default flagged.
     // Each entry: { id, name, description, isDefault }. Populated by the
     // audioSinks probe on demand (refreshed when the Audio quick panel opens).
@@ -1219,11 +1241,15 @@ Item {
         command: ["bash", "-lc",
             "v=$(pamixer --get-volume 2>/dev/null || echo 0); "
             + "m=$(pamixer --get-mute 2>/dev/null || echo false); "
-            + "printf '%s|%s' \"$v\" \"$m\""]
+            + "dt=speaker; "
+            + "sn=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null"
+            + " | awk '/node.description/{gsub(/.*= \"/,\"\"); gsub(/\".*/,\"\"); print}'); "
+            + "case \"$sn\" in *[Hh]ead*|*[Bb]ud*|*[Aa]ir[Pp]od*|*WH-*|*WF-*|*XM[0-9]*) dt=headset;; esac; "
+            + "printf '%s|%s|%s' \"$v\" \"$m\" \"$dt\""]
         stdout: StdioCollector {
             onStreamFinished: {
                 const p = this.text.split("|");
-                if (p.length !== 2) return;
+                if (p.length < 2) return;
                 const v = parseInt(p[0]);
                 const m = p[1].trim() === "true";
                 root.audioVol = isNaN(v) ? 0 : v;
@@ -1237,6 +1263,7 @@ Item {
                 } else {
                     root.audioIcon = root.icoVol3;
                 }
+                root.audioDeviceType = (p.length > 2 && p[2].trim() === "headset") ? "headset" : "speaker";
             }
         }
     }
@@ -1672,7 +1699,8 @@ Item {
     }
 
     // ---------- Surfaces ----------
-    Bar              { root: root }
+    Bar              { root: root; screen: root.primaryScreen; visible: root.barMode === "klingon" }
+    StarkBar         { root: root; screen: root.primaryScreen; visible: root.barMode === "stark" }
     TooltipOverlay   { root: root }
     CalendarPopup    { root: root }
     ScreenshotsPopup { root: root }
@@ -1740,6 +1768,16 @@ Item {
         function close(): void { root.displayVisible = false; }
         function reset(): void { root.resetDisplay(); }
         function blank(): void { root.blankScreen(); }
+    }
+
+    // bind = SUPER SHIFT, B, exec, qs ipc -c desktop call navbar toggle
+    IpcHandler {
+        target: "navbar"
+        function toggle(): void { root.cycleBarMode(); }
+        function show(): void   { root.barMode = "klingon"; }
+        function hide(): void   { root.barMode = "hidden"; }
+        function klingon(): void { root.barMode = "klingon"; }
+        function stark(): void  { root.barMode = "stark"; }
     }
 
     // bind = SUPER, C, exec, qs ipc call calendar toggle

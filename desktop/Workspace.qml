@@ -52,12 +52,37 @@ Item {
         text: wsCell.label
         color: wsCell.active ? wsCell.root.seal : (wsCell.present ? wsCell.root.ink : wsCell.root.inkDeep)
         opacity: wsCell.active ? 1.0 : (wsCell.present ? 0.75 : 0.35)
-        font.family: wsCell.root.serif
-        font.pixelSize: wsCell.active ? 14 : 12
+        font.family: wsCell.root.wsFont
+        font.pixelSize: wsCell.active ? 15 : 13
         font.weight: Font.Light
         Behavior on color { ColorAnimation { duration: 120 } }
         Behavior on opacity { NumberAnimation { duration: 120 } }
         Behavior on font.pixelSize { NumberAnimation { duration: 120 } }
+    }
+
+    Rectangle {
+        id: underline
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: root.isHorizontal ? 2 : 0
+        width: root.isHorizontal ? 10 : 2
+        height: root.isHorizontal ? 2 : 10
+        radius: 1
+        color: wsCell.root.accent
+        opacity: wsCell.active ? 0.9 : 0
+        Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
+
+        states: State {
+            when: !wsCell.root.isHorizontal
+            AnchorChanges {
+                target: underline
+                anchors.bottom: undefined
+                anchors.horizontalCenter: undefined
+                anchors.left: wsCell.left
+                anchors.verticalCenter: wsCell.verticalCenter
+            }
+            PropertyChanges { target: underline; anchors.leftMargin: 2 }
+        }
     }
 
     MouseArea {

@@ -9,7 +9,7 @@ Item {
     property string tooltip: ""
     property color color: root.ink
     property string fontFamily: root.mono
-    property int fontSize: 12
+    property int fontSize: 13
     // Optical centring. Every font here (Nerd Font, kanji serif, omarchy
     // mark) has ascender > |descender|, so anchors.centerIn lands the
     // inked glyph below the geometric centre. A 1px lift restores it.

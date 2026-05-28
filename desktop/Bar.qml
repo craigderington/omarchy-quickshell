@@ -133,7 +133,7 @@ PanelWindow {
                 text: bar.root.hh + ":" + bar.root.mm
                 color: clockMouse.containsMouse ? bar.root.seal : bar.root.ink
                 font.family: bar.root.mono
-                font.pixelSize: 12
+                font.pixelSize: 13
                 font.letterSpacing: 2
                 font.weight: Font.Light
                 Behavior on color { ColorAnimation { duration: 180 } }
@@ -147,7 +147,7 @@ PanelWindow {
                 text: bar.root.hh
                 color: clockMouse.containsMouse ? bar.root.seal : bar.root.ink
                 font.family: bar.root.mono
-                font.pixelSize: 11
+                font.pixelSize: 12
                 font.weight: Font.Light
                 Behavior on color { ColorAnimation { duration: 180 } }
             }
@@ -160,7 +160,7 @@ PanelWindow {
                 text: bar.root.mm
                 color: clockMouse.containsMouse ? bar.root.seal : bar.root.ink
                 font.family: bar.root.mono
-                font.pixelSize: 11
+                font.pixelSize: 12
                 font.weight: Font.Light
                 Behavior on color { ColorAnimation { duration: 180 } }
             }
@@ -233,7 +233,7 @@ PanelWindow {
                         text: bar.root.icoMusic
                         color: bar.root.paper
                         font.family: bar.root.mono
-                        font.pixelSize: 9
+                        font.pixelSize: 10
                     }
 
                     Text {
@@ -246,7 +246,7 @@ PanelWindow {
                         text: bar.root.musicTitle
                         color: bar.root.paper
                         font.family: bar.root.mono
-                        font.pixelSize: 10
+                        font.pixelSize: 11
                         font.weight: Font.Medium
                         elide: Text.ElideRight
                     }
@@ -309,7 +309,7 @@ PanelWindow {
                 tooltip: "Menu"
                 color: bar.root.seal
                 fontFamily: "omarchy"
-                fontSize: 14
+                fontSize: 15
                 onActivated: bar.root.paletteToggleRequested()
                 onRightActivated: bar.root.run("xdg-terminal-exec")
             }
@@ -352,7 +352,7 @@ PanelWindow {
                             ? bar.root.weatherTempC + "°C"
                             : "Weather…")
                 color: bar.root.weatherUnavailable ? bar.root.inkDeep : bar.root.ink
-                fontSize: 13
+                fontSize: 14
                 onActivated: {
                     if (bar.root.weatherVisible) bar.root.weatherVisible = false;
                     else bar.root.openWeather();
@@ -471,7 +471,7 @@ PanelWindow {
                          ? "Omarchy update available · " + bar.root.omarchyLatestTag
                          : "Omarchy update available"
                 color: bar.root.seal
-                fontSize: 10
+                fontSize: 11
                 onActivated: bar.root.openOmarchyUpdate()
             }
 
