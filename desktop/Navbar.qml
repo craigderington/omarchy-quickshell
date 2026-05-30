@@ -93,7 +93,7 @@ Item {
     }
 
     function cycleBarMode() {
-        const modes = ["klingon", "stark", "hidden"];
+        const modes = ["klingon", "stark", "ghost", "hidden"];
         root.barMode = modes[(modes.indexOf(root.barMode) + 1) % modes.length];
     }
 
@@ -1701,6 +1701,7 @@ Item {
     // ---------- Surfaces ----------
     Bar              { root: root; screen: root.primaryScreen; visible: root.barMode === "klingon" }
     StarkBar         { root: root; screen: root.primaryScreen; visible: root.barMode === "stark" }
+    GhostBar         { root: root; screen: root.primaryScreen; visible: root.barMode === "ghost" }
     TooltipOverlay   { root: root }
     CalendarPopup    { root: root }
     ScreenshotsPopup { root: root }
@@ -1778,6 +1779,7 @@ Item {
         function hide(): void   { root.barMode = "hidden"; }
         function klingon(): void { root.barMode = "klingon"; }
         function stark(): void  { root.barMode = "stark"; }
+        function ghost(): void  { root.barMode = "ghost"; }
     }
 
     // bind = SUPER, C, exec, qs ipc call calendar toggle
