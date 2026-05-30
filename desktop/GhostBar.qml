@@ -72,13 +72,10 @@ PanelWindow {
                     y: parent.height / 2 + 4
                     height: 2
                     radius: 1
-                    width: ws.active ? 16
-                         : ws.present ? 7
-                         : 3
+                    // Only the currently selected workspace gets an indicator.
+                    width: ws.active ? 16 : 0
                     color: bar.accent
-                    opacity: ws.active ? 1.0
-                           : ws.present ? 0.4
-                           : (mouse.containsMouse ? 0.3 : 0.12)
+                    opacity: ws.active ? 1.0 : 0.0
                     Behavior on width   { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
                     Behavior on opacity { NumberAnimation { duration: 180 } }
 
